@@ -13,11 +13,14 @@ use datski::{
     data::{
         DataPoint, 
         DataSet,
+    },
+    la::{
+        Vector
     }
 };
 
-
 use termplot::*;
+
 
 fn main() {
     // let x = [(2.0, 10.0), (2.0, 20.0), (-1.0, 3.0), (4.0, -2.0)];
@@ -26,29 +29,29 @@ fn main() {
     //     .map(|(x1, x2)| (x1, x2, f(x1, x2)))
     //     .collect();
 
-    let x = [-10.0, -4.0, -1.0, 0.0, 1.0, 3.0, 7.0, 8.0];
-    let f: fn(f64) -> f64 = |x| x.powi(2);
-    let sample: Vec<(f64, f64)> = x.into_iter()
-        .map(|x| (x, f(x)))
-        .collect();
+    // let x = [-10.0, -4.0, -1.0, 0.0, 1.0, 3.0, 7.0, 8.0];
+    // let f: fn(f64) -> f64 = |x| x.powi(2);
+    // let sample: Vec<(f64, f64)> = x.into_iter()
+    //     .map(|x| (x, f(x)))
+    //     .collect();
     
 
-    // let sample = [
-    //     (0.0, 0.0, 0.0),
-    //     (0.0, 1.0, 1.0),
-    //     (1.0, 0.0, 1.0),
-    //     (1.0, 1.0, 0.0),
-    // ];
+    let sample = [
+        (0.0, 0.0, 0.0),
+        (0.0, 1.0, 1.0),
+        (1.0, 0.0, 1.0),
+        (1.0, 1.0, 0.0),
+    ];
 
     // let sample = [
     //     (-1.0, -1.0, -1.0),
     //     (-1.0, 0.0, 0.0),
-    //     (-1.0, 1.0, 1.0),
+    //     (-1.0, 1.0, 0.0),
     //     (0.0, -1.0, 0.0),
     //     (0.0, 0.0, 0.0),
-    //     (0.0, 1.0, 1.0),
-    //     (1.0, -1.0, 1.0),
-    //     (1.0, 0.0, 1.0),
+    //     (0.0, 1.0, 0.0),
+    //     (1.0, -1.0, 0.0),
+    //     (1.0, 0.0, 0.0),
     //     (1.0, 1.0, 1.0)
     // ];
 
@@ -61,22 +64,20 @@ fn main() {
     //     (156.0, 5.7, 159.0, 5.9)
     // ];
 
-    // let ds = DataSet::new(
-    //     sample.into_iter()
-    //         .map(|(x1, x2, y)| DataPoint::new(vec![x1, x2], y))
-    //         .collect()
-    // );
-
     let ds = DataSet::new(
         sample.into_iter()
-            .map(|(x, y)| DataPoint::new(vec![x], y))
+            .map(|(x1, x2, y)| DataPoint::new(Vector::new(vec![x1, x2]), y))
             .collect()
     );
 
+    // let ds = DataSet::new(
+    //     sample.into_iter()
+    //         .map(|(x, y)| DataPoint::new(vec![x], y))
+    //         .collect()
+    // );
 
-
-    let mut n1 = Neuron::from_dim(1).set_activation(Swish);
-    let mut n2 = Neuron::from_dim(1).set_activation(Sigmoid);
+    let mut n1 = Neuron::from_dim(2).set_activation(Linear);
+    let mut n2 = Neuron::from_dim(2).set_activation(Linear);
     let mut n3 = Neuron::from_dim(2).set_activation(Linear);
     let mut nw = Network::new(n1, n2, n3);
 
@@ -141,24 +142,24 @@ fn main() {
     // })
 
 
-    let mut plot = Plot::default();
-    plot.set_domain(Domain(-40.0..40.0))
-        .set_codomain(Domain(-60.0..60.0))
-        .set_title("f(x)")
-        .set_size(Size::new(200, 100))
-        .add_plot(Box::new(plot::Graph::new(f)));
+    // let mut plot = Plot::default();
+    // plot.set_domain(Domain(-40.0..40.0))
+    //     .set_codomain(Domain(-60.0..60.0))
+    //     .set_title("f(x)")
+    //     .set_size(Size::new(200, 100))
+    //     .add_plot(Box::new(plot::Graph::new(f)));
 
-    println!("{plot}");
+    // println!("{plot}");
 
 
-    let mut plot = Plot::default();
-    plot.set_domain(Domain(-40.0..40.0))
-        .set_codomain(Domain(-60.0..60.0))
-        .set_title("pred f(x)")
-        .set_size(Size::new(200, 100))
-        .add_plot(Box::new(plot::Graph::new(move |x| nw.predictor()(&[x]))));
+    // let mut plot = Plot::default();
+    // plot.set_domain(Domain(-40.0..40.0))
+    //     .set_codomain(Domain(-60.0..60.0))
+    //     .set_title("pred f(x)")
+    //     .set_size(Size::new(200, 100))
+    //     .add_plot(Box::new(plot::Graph::new(move |x| nw.predictor()(&[x]))));
 
-    println!("{plot}");
+    // println!("{plot}");
 
 
 }

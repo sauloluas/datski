@@ -1,11 +1,24 @@
 
+#[derive(Debug, Clone)]
 pub struct Vector {
     data: Vec<f64>
 }
 
 impl Vector {
+    pub fn new(data: Vec<f64>) -> Self {
+        Self { data }
+    }
+
     pub fn len(&self) -> usize {
         self.data.len()
+    }
+
+    pub fn at(&self, i: usize) -> f64 {
+        self.data[i]
+    }
+
+    pub fn set_at(&mut self, i: usize, new: f64) {
+        self.data[i] = new;
     }
 
     pub fn iter(&self) -> impl Iterator<Item = &f64> {
@@ -21,6 +34,20 @@ impl Vector {
             .zip(other.iter())
             .map(|(a, b)| a * b)
             .sum()
+    }
+
+    pub fn sub(&self, other: &Self) -> Vector {
+        if self.len() != other.len() {
+            panic!("Incompatible vector lengths");
+        }
+
+        let data = self.iter()
+            .zip(other.iter())
+            .map(|(a, b)| a - b)
+            .collect();
+
+        Vector { data }
+
     }
 }
 

@@ -6,6 +6,7 @@ use crate::{
         RATE,
     },
     la::{
+        Vector,
         vecmul,
         vecsub,
     },
@@ -17,17 +18,17 @@ pub type Reductor = Box<dyn Fn(&[f64]) -> f64>;
 
 #[derive(Clone, Debug)]
 pub struct Neuron {
-    pub weights: Vec<f64>,
+    pub weights: Vector,
     pub bias: f64,
     pub activation: Activator
 }
 
 impl Neuron {
     pub fn from_dim(n: usize) -> Neuron {
-        let mut weights: Vec<f64> = vec![0.0; n];
+        let mut weights = Vector::new(vec![0.0; n]);
 
         for i in 0..n {
-            weights[i] = 2.0 * random::<f64>() - 1.0;
+            weights.set_at(i, 2.0 * random::<f64>() - 1.0);
         }
 
         let bias = 2.0 * random::<f64>() - 1.0;
@@ -43,13 +44,13 @@ impl Neuron {
     }
 
     pub fn set_weight_at(mut self, n: usize, new_weight: f64) -> Self {
-        self.weights[n] = new_weight;
+        self.weights.set_at(n, new_weight);
         self
     }
 
     pub fn perturb_at(&self, n: usize) -> Neuron {
         let mut other = self.clone();
-        let w = other.weights[n];
+        let w = other.weights.at(n);
         other.set_weight_at(n, w + EPS).clone()
     }
 
@@ -77,42 +78,43 @@ impl Neuron {
         self.weights.len()
     }
 
-    pub fn forward(&self) -> impl Fn(&[f64]) -> f64 {
+    pub fn forward(&self) -> impl Fn(&Vector) -> f64 {
 
-        |xs: &[f64]| {
-            self.activation.apply(vecmul(&xs, &self.weights.clone()) + self.bias)
+        |xs: &Vector| {
+            // self.activation.apply(vecmul(&xs, &self.weights.clone()) + self.bias)
+            self.activation.apply(self.weights.dot(&xs) + self.bias)
         }
 
     }
 
-    pub fn fdiff(&self, ds: &DataSet, sl: f64) -> f64 {
-        // println!("perturbed loss: {}", self.loss(&ds));
-        ( self.loss(&ds) - sl ) / EPS
-    }
+    // pub fn fdiff(&self, ds: &DataSet, sl: f64) -> f64 {
+    //     // println!("perturbed loss: {}", self.loss(&ds));
+    //     ( self.loss(&ds) - sl ) / EPS
+    // }
 
-    /// adjusting the neuron weights seeking the local minimum
-    pub fn learn(&mut self, ds: &DataSet) {
-        let dim = self.dim();
-        if dim != ds.points[0].dim() {
-            panic!("Incompatible vector lengths");
-        }
+    // /// adjusting the neuron weights seeking the local minimum
+    // pub fn learn(&mut self, ds: &DataSet) {
+    //     let dim = self.dim();
+    //     if dim != ds.points[0].dim() {
+    //         panic!("Incompatible vector lengths");
+    //     }
 
-        let static_loss = self.loss(&ds);
+    //     let static_loss = self.loss(&ds);
 
-        let mut dw: Vec<f64> = vec![0.0; dim];
+    //     let mut dw: Vec<f64> = vec![0.0; dim];
 
-        for i in 0..dim {
-            dw[i] = self.perturb_at(i).fdiff(&ds, static_loss)*RATE;
-        }
+    //     for i in 0..dim {
+    //         dw[i] = self.perturb_at(i).fdiff(&ds, static_loss)*RATE;
+    //     }
 
-        let db = self.perturb_bias().fdiff(&ds, static_loss)*RATE;
-        // println!("db: {db}");
+    //     let db = self.perturb_bias().fdiff(&ds, static_loss)*RATE;
+    //     // println!("db: {db}");
 
-        self.weights = vecsub(&self.weights, &dw);
+    //     self.weights = vecsub(&self.weights, &dw);
 
-        *self = self.clone().set_bias(self.bias() - db);
+    //     *self = self.clone().set_bias(self.bias() - db);
 
-    }
+    // }
 
 }
 
