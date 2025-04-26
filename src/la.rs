@@ -1,4 +1,29 @@
 
+pub struct Vector {
+    data: Vec<f64>
+}
+
+impl Vector {
+    pub fn len(&self) -> usize {
+        self.data.len()
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &f64> {
+        self.data.iter()
+    }
+
+    pub fn dot(&self, other: &Self) -> f64 {
+        if self.len() != other.len() {
+            panic!("Incompatible vector lengths");
+        }
+
+        self.iter()
+            .zip(other.iter())
+            .map(|(a, b)| a * b)
+            .sum()
+    }
+}
+
 pub fn vecmul(xs: &[f64], ws: &[f64]) -> f64 {
     if xs.len() != ws.len() {
         panic!("Incompatible vector lengths");
@@ -32,6 +57,8 @@ pub fn vecsub(ms: &[f64], ns: &[f64]) -> Vec<f64> {
     os
 
 }
+
+
 
 
 

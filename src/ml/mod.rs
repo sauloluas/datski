@@ -8,4 +8,5 @@ const RATE: f64 = 1e-5;
 pub use neuron::Neuron;
 pub use network::Network;
 pub use activation_fn as act_fn;
+pub use act_fn::Activator;
 

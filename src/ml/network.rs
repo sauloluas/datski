@@ -1,8 +1,7 @@
 use crate::{
 	ml::{Neuron, EPS, RATE},
 	data::DataSet,
-	algebra::{
-        vecmul,
+	la::{
         vecsub,
     },
 };

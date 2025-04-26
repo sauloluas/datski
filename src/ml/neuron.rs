@@ -1,11 +1,11 @@
 use crate::{
     data::DataSet,
     ml::{
-        activation_fn::id,
+        Activator::{self, Linear},
         EPS,
         RATE,
     },
-    algebra::{
+    la::{
         vecmul,
         vecsub,
     },
@@ -14,13 +14,12 @@ use rand::random;
    
 
 pub type Reductor = Box<dyn Fn(&[f64]) -> f64>;
-pub type Activator = fn(f64) -> f64;
 
 #[derive(Clone, Debug)]
 pub struct Neuron {
     pub weights: Vec<f64>,
     pub bias: f64,
-    pub activation: fn(f64) -> f64
+    pub activation: Activator
 }
 
 impl Neuron {
@@ -34,7 +33,7 @@ impl Neuron {
         let bias = 2.0 * random::<f64>() - 1.0;
         // let bias = 0.0;
 
-        let activation = id;
+        let activation = Linear;
 
         Neuron { weights, bias, activation }
     }
@@ -81,7 +80,7 @@ impl Neuron {
     pub fn forward(&self) -> impl Fn(&[f64]) -> f64 {
 
         |xs: &[f64]| {
-            (self.activation)(vecmul(&xs, &self.weights.clone()) + self.bias)
+            self.activation.apply(vecmul(&xs, &self.weights.clone()) + self.bias)
         }
 
     }

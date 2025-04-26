@@ -2,11 +2,12 @@ use datski::{
     ml::{
         Neuron,
         Network,
-        act_fn::{
-            sigmoid,
-            relu,
-            id,
-            tanh
+        Activator::{
+            Sigmoid,
+            Relu,
+            Linear,
+            Tanh,
+            Swish
         },
     },
     data::{
@@ -14,6 +15,7 @@ use datski::{
         DataSet,
     }
 };
+
 
 use termplot::*;
 
@@ -73,9 +75,9 @@ fn main() {
 
 
 
-    let mut n1 = Neuron::from_dim(1).set_activation(relu);
-    let mut n2 = Neuron::from_dim(1).set_activation(relu);
-    let mut n3 = Neuron::from_dim(2).set_activation(id);
+    let mut n1 = Neuron::from_dim(1).set_activation(Swish);
+    let mut n2 = Neuron::from_dim(1).set_activation(Sigmoid);
+    let mut n3 = Neuron::from_dim(2).set_activation(Linear);
     let mut nw = Network::new(n1, n2, n3);
 
     (0..1000).for_each(|i| {

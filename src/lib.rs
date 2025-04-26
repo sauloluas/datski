@@ -1,3 +1,3 @@
 pub mod ml;
 pub mod data;
-pub mod algebra;
+pub mod la;
