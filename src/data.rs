@@ -1,18 +1,18 @@
 use std::iter::IntoIterator;
-use crate::la::Vector;
+use lin2::Vector;
 
 pub struct DataPoint {
-    xs: Vector,  // Dynamic number of inputs (x1, x2, ... xn)
+    xs: Vector<f64>,  // Dynamic number of inputs (x1, x2, ... xn)
     y: f64,
 }
 
 impl DataPoint {
-    pub fn new(xs: Vector, y: f64) -> Self {
+    pub fn new(xs: Vector<f64>, y: f64) -> Self {
         Self { xs, y }
     }
 
     /// Get input values as a slice
-    pub fn xs(&self) -> &Vector {
+    pub fn xs(&self) -> &Vector<f64> {
         &self.xs
     }
 
@@ -36,7 +36,7 @@ impl DataSet {
 		DataSet { points }
 	}
 
-    pub fn mse(&self, predictor: impl Fn(&Vector) -> f64) -> f64 {
+    pub fn mse(&self, predictor: impl Fn(&Vector<f64>) -> f64) -> f64 {
     	let mut sqe = 0.0;
 
     	for point in &self.points {

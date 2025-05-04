@@ -1,10 +1,12 @@
 use crate::{
 	ml::{Neuron, EPS, RATE},
 	data::DataSet,
-	la::{
-        vecsub,
+};
+
+use std::ops::Sub;
+
+use lin2::{
         Vector
-    },
 };
 
 #[derive(Debug, Clone)]
@@ -30,12 +32,12 @@ impl Network {
 	}
 
 
-    pub fn predictor(&self) -> impl Fn(&Vector) -> f64 {
+    pub fn predictor(&self) -> impl Fn(&Vector<f64>) -> f64 {
 
-        |xs: &Vector| {
+        |xs: &Vector<f64>| {
 	        let ff1 = self.h1.forward()(&xs); // W1*X1
 	        let ff2 = self.h2.forward()(&xs); // W2*X2
-	        let y_pred = self.o.forward()(&Vector::new(vec![ff1, ff2])); // W3*H
+	        let y_pred = self.o.forward()(&Vector::from(&vec![ff1, ff2])); // W3*H
 	        y_pred
         }
 
@@ -50,7 +52,7 @@ impl Network {
 
 
     	// first hidden layer neuron
-        let mut h1dws = Vector::new(vec![0.0; self.h1.dim()]);
+        let mut h1dws = Vector::from(&vec![0.0; self.h1.dim()]);
 
         for i in 0..self.h1.dim() {
         	let mut tweaked_nw = self.clone();
@@ -67,7 +69,7 @@ impl Network {
         let h1db = RATE*(tweak_loss - static_loss)  /  EPS;
         
         // second hidden layer neuron
-        let mut h2dws = Vector::new(vec![0.0; self.h2.dim()]);
+        let mut h2dws = Vector::from(&vec![0.0; self.h2.dim()]);
 
         for i in 0..self.h2.dim() {
         	let mut tweaked_nw = self.clone();
@@ -84,7 +86,7 @@ impl Network {
         let h2db = RATE*(tweak_loss - static_loss)  /  EPS;
         
         // output neuron
-        let mut odws = Vector::new(vec![0.0; self.o.dim()]);
+        let mut odws = Vector::from(&vec![0.0; self.o.dim()]);
 
         for i in 0..self.o.dim() {
         	let mut tweaked_nw = self.clone();

@@ -5,27 +5,25 @@ use crate::{
         EPS,
         RATE,
     },
-    la::{
-        Vector,
-        vecmul,
-        vecsub,
-    },
 };
 use rand::random;
-   
+
+use lin2::{
+        Dot, Vector
+};
 
 pub type Reductor = Box<dyn Fn(&[f64]) -> f64>;
 
 #[derive(Clone, Debug)]
 pub struct Neuron {
-    pub weights: Vector,
+    pub weights: Vector<f64>,
     pub bias: f64,
     pub activation: Activator
 }
 
 impl Neuron {
     pub fn from_dim(n: usize) -> Neuron {
-        let mut weights = Vector::new(vec![0.0; n]);
+        let mut weights = Vector::from(&vec![0.0; n]);
 
         for i in 0..n {
             weights.set_at(i, 2.0 * random::<f64>() - 1.0);
@@ -49,13 +47,13 @@ impl Neuron {
     }
 
     pub fn perturb_at(&self, n: usize) -> Neuron {
-        let mut other = self.clone();
-        let w = other.weights.at(n);
-        other.set_weight_at(n, w + EPS).clone()
+        let other = self.clone();
+        let w = *other.weights.at(n);
+        other.set_weight_at(n, w + EPS)
     }
 
     pub fn perturb_bias(&mut self) -> Neuron {
-        let mut other = self.clone();
+        let other = self.clone();
         let b = other.bias;
         other.set_bias(b + EPS).clone() // clone it until it works!
     }
@@ -78,11 +76,11 @@ impl Neuron {
         self.weights.len()
     }
 
-    pub fn forward(&self) -> impl Fn(&Vector) -> f64 {
+    pub fn forward(&self) -> impl Fn(&Vector<f64>) -> f64 {
 
-        |xs: &Vector| {
+        |xs: &Vector<f64>| {
             // self.activation.apply(vecmul(&xs, &self.weights.clone()) + self.bias)
-            self.activation.apply(self.weights.dot(&xs) + self.bias)
+            self.activation.apply(self.weights.dot(xs) + self.bias)
         }
 
     }

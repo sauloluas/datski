@@ -1,3 +1,4 @@
+#[allow(unused_imports)]
 use datski::{
     ml::{
         Neuron,
@@ -14,10 +15,9 @@ use datski::{
         DataPoint, 
         DataSet,
     },
-    la::{
-        Vector
-    }
 };
+
+use lin2::Vector;
 
 use termplot::*;
 
@@ -66,7 +66,7 @@ fn main() {
 
     let ds = DataSet::new(
         sample.into_iter()
-            .map(|(x1, x2, y)| DataPoint::new(Vector::new(vec![x1, x2]), y))
+            .map(|(x1, x2, y)| DataPoint::new(Vector::from(&vec![x1, x2]), y))
             .collect()
     );
 
@@ -76,9 +76,9 @@ fn main() {
     //         .collect()
     // );
 
-    let mut n1 = Neuron::from_dim(2).set_activation(Linear);
-    let mut n2 = Neuron::from_dim(2).set_activation(Linear);
-    let mut n3 = Neuron::from_dim(2).set_activation(Linear);
+    let mut n1 = Neuron::from_dim(2).set_activation(Sigmoid);
+    let mut n2 = Neuron::from_dim(2).set_activation(Sigmoid);
+    let mut n3 = Neuron::from_dim(2).set_activation(Sigmoid);
     let mut nw = Network::new(n1, n2, n3);
 
     (0..1000).for_each(|i| {
